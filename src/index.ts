@@ -1,11 +1,11 @@
 import express, { Express, NextFunction, Request, Response } from "express";
 import cors from "cors";
+import { expiryTransactionJob } from "./cron/jobs/expiry.transaction.schedule";
+import ProductsRouter from "./routes/products.router.js";
 
 const app: Express = express(); // Fixed type assignment
 const port = 4000;
-
 app.use(express.json());
-
 app.use(
   cors({
     origin: "*", // Fixed CORS config
@@ -16,6 +16,9 @@ app.get("/", (req: Request, res: Response) => {
   res.send("<h1>Welcome to Express Typescript</h1>");
 });
 
+app.use('/api/products', ProductsRouter);
+
+expiryTransactionJob();
 // Centralized Error Handler
 app.use((error: any, req: Request, res: Response, next: NextFunction) => {
   res.status(500).json({
